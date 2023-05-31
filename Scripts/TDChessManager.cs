@@ -284,18 +284,38 @@ public class TDChessManager : MonoBehaviour
             case FigureType.p:
                 positions.AddRange(FigureMovement.Pawn.ToList());
                 if (_figure.color == FigureColor.black) positions[0] = -positions[0];
-                Vector3Int pos = new Vector3Int( _figure.pos.x + 1,  _figure.pos.y + 1, _figure.pos.z + 1);
-                Vector3Int pos1 = new Vector3Int( _figure.pos.x + -1,  _figure.pos.y + 1, _figure.pos.z + 1);
-                Vector3Int pos2 = new Vector3Int( _figure.pos.x + 1,  _figure.pos.y + 1, _figure.pos.z + -1);
-                Vector3Int pos3 = new Vector3Int( _figure.pos.x + -1,  _figure.pos.y + 1, _figure.pos.z + -1);
-                Figure figure = GetFigureCeil(new Vector3Byte((byte)pos.x, (byte)pos.y, (byte)pos.z));
-                Figure figure1 = GetFigureCeil(new Vector3Byte((byte)pos1.x, (byte)pos1.y, (byte)pos1.z));
-                Figure figure2 = GetFigureCeil(new Vector3Byte((byte)pos2.x, (byte)pos2.y, (byte)pos2.z));
-                Figure figure3 = GetFigureCeil(new Vector3Byte((byte)pos3.x, (byte)pos3.y, (byte)pos3.z));
-                if (figure != null || figure.color != _figure.color) positions.Add(pos);
-                if (figure1 != null || figure1.color != _figure.color) positions.Add(pos1);
-                if (figure2 != null || figure2.color != _figure.color) positions.Add(pos2);
-                if (figure3 != null || figure3.color != _figure.color) positions.Add(pos3);
+
+                Vector3Int pos = new Vector3Int(1, 1, 1);
+                Vector3Int pos1 = new Vector3Int(-1, 1, 1);
+                Vector3Int pos2 = new Vector3Int(1, 1, -1);
+                Vector3Int pos3 = new Vector3Int(-1, 1, -1);
+
+                Vector3Int pos4 = new Vector3Int(0, 1, 1);
+                Vector3Int pos5 = new Vector3Int(0, 1, 1);
+                Vector3Int pos6 = new Vector3Int(1, 1, 0);
+                Vector3Int pos7 = new Vector3Int(-1, 1, 0);
+
+                Figure figure = GetFigureCeil(_figure.pos + new Vector3Byte((byte)pos.x, (byte)pos.y, (byte)pos.z));
+                Figure figure1 = GetFigureCeil(_figure.pos + new Vector3Byte((byte)pos1.x, (byte)pos1.y, (byte)pos1.z));
+                Figure figure2 = GetFigureCeil(_figure.pos + new Vector3Byte((byte)pos2.x, (byte)pos2.y, (byte)pos2.z));
+                Figure figure3 = GetFigureCeil(_figure.pos + new Vector3Byte((byte)pos3.x, (byte)pos3.y, (byte)pos3.z));
+
+                Figure figure4 = GetFigureCeil(_figure.pos + new Vector3Byte((byte)pos4.x, (byte)pos4.y, (byte)pos4.z));
+                Figure figure5 = GetFigureCeil(_figure.pos + new Vector3Byte((byte)pos5.x, (byte)pos5.y, (byte)pos5.z));
+                Figure figure6 = GetFigureCeil(_figure.pos + new Vector3Byte((byte)pos6.x, (byte)pos6.y, (byte)pos6.z));
+                Figure figure7 = GetFigureCeil(_figure.pos + new Vector3Byte((byte)pos7.x, (byte)pos7.y, (byte)pos7.z));
+
+                if (figure != null && figure.color != _figure.color) positions.Add(pos);
+                if (figure1 != null && figure1.color != _figure.color) positions.Add(pos1);
+                if (figure2 != null && figure2.color != _figure.color) positions.Add(pos2);
+                if (figure3 != null && figure3.color != _figure.color) positions.Add(pos3);
+
+
+                if (figure4 != null && figure4.color != _figure.color) positions.Add(pos4);
+                if (figure5 != null && figure5.color != _figure.color) positions.Add(pos5);
+                if (figure6 != null && figure6.color != _figure.color) positions.Add(pos6);
+                if (figure7 != null && figure7.color != _figure.color) positions.Add(pos7);
+
                 break;
             case FigureType.kn: positions.AddRange(FigureMovement.Knight.ToList()); break;
             case FigureType.b: positions.AddRange(FigureMovement.Bishop); break;
