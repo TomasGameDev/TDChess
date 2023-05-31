@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 public class TDChessManager : MonoBehaviour
 {
@@ -28,6 +28,7 @@ public class TDChessManager : MonoBehaviour
         public FigureColor color;
         public GameObject obj;
         public Vector3Byte _pos;
+        public bool firstMove = true;
         public Vector3Byte pos
         {
             get { return _pos; }
@@ -135,71 +136,71 @@ public class TDChessManager : MonoBehaviour
         public static List<Vector3Int> Diagonal(int iterations)
         {
             List<Vector3Int> positions = new List<Vector3Int>();
-            for (int xy = -iterations - 1; xy < iterations + 1; xy++)
+            for (int xy = -iterations; xy < iterations + 1; xy++)
             {
                 Vector3Int pos = new Vector3Int(xy, xy, 0);
                 // if (GetFigureCeil(new v pos))
                 if (pos != Vector3Int.zero) positions.Add(pos);
             }
-            for (int xy = -iterations - 1; xy < iterations + 1; xy++)
+            for (int xy = -iterations; xy < iterations + 1; xy++)
             {
                 Vector3Int pos = new Vector3Int(xy, -xy, 0);
                 if (pos != Vector3Int.zero) positions.Add(pos);
             }
-            for (int xy = -iterations - 1; xy < iterations + 1; xy++)
+            for (int xy = -iterations; xy < iterations + 1; xy++)
             {
                 Vector3Int pos = new Vector3Int(-xy, xy, 0);
                 if (pos != Vector3Int.zero) positions.Add(pos);
             }
 
-            for (int xyz = -iterations - 1; xyz < iterations + 1; xyz++)
+            for (int xyz = -iterations; xyz < iterations + 1; xyz++)
             {
                 Vector3Int pos = new Vector3Int(xyz, xyz, xyz);
                 if (pos != Vector3Int.zero) positions.Add(pos);
             }
-            for (int xyz = -iterations - 1; xyz < iterations + 1; xyz++)
+            for (int xyz = -iterations; xyz < iterations + 1; xyz++)
             {
                 Vector3Int pos = new Vector3Int(-xyz, xyz, xyz);
                 if (pos != Vector3Int.zero) positions.Add(pos);
             }
-            for (int xyz = -iterations - 1; xyz < iterations + 1; xyz++)
+            for (int xyz = -iterations; xyz < iterations + 1; xyz++)
             {
                 Vector3Int pos = new Vector3Int(xyz, -xyz, xyz);
                 if (pos != Vector3Int.zero) positions.Add(pos);
             }
-            for (int xyz = -iterations - 1; xyz < iterations + 1; xyz++)
+            for (int xyz = -iterations; xyz < iterations + 1; xyz++)
             {
                 Vector3Int pos = new Vector3Int(xyz, xyz, -xyz);
                 if (pos != Vector3Int.zero) positions.Add(pos);
             }
 
-            for (int xz = -iterations - 1; xz < iterations + 1; xz++)
+            for (int xz = -iterations; xz < iterations + 1; xz++)
             {
                 Vector3Int pos = new Vector3Int(xz, 0, xz);
                 if (pos != Vector3Int.zero) positions.Add(pos);
             }
-            for (int xz = -iterations - 1; xz < iterations + 1; xz++)
+            for (int xz = -iterations; xz < iterations + 1; xz++)
             {
                 Vector3Int pos = new Vector3Int(-xz, 0, xz);
                 if (pos != Vector3Int.zero) positions.Add(pos);
             }
-            for (int xz = -iterations - 1; xz < iterations + 1; xz++)
+            for (int xz = -iterations; xz < iterations + 1; xz++)
             {
                 Vector3Int pos = new Vector3Int(xz, 0, -xz);
                 if (pos != Vector3Int.zero) positions.Add(pos);
             }
 
-            for (int yz = -iterations - 1; yz < iterations + 1; yz++)
+            for (int yz = -iterations; yz < iterations + 1; yz++)
             {
                 Vector3Int pos = new Vector3Int(0, yz, yz);
                 if (pos != Vector3Int.zero) positions.Add(pos);
             }
-            for (int yz = -iterations - 1; yz < iterations + 1; yz++)
+            for (int yz = -iterations; yz < iterations + 1; yz++)
             {
                 Vector3Int pos = new Vector3Int(0, -yz, yz);
                 if (pos != Vector3Int.zero) positions.Add(pos);
             }
-            for (int yz = -iterations - 1; yz < iterations + 1; yz++)
+            for (int yz = -iterations; yz < iterations + 1; yz++)
             {
                 Vector3Int pos = new Vector3Int(0, yz, -yz);
                 if (pos != Vector3Int.zero) positions.Add(pos);
@@ -209,19 +210,19 @@ public class TDChessManager : MonoBehaviour
         public static List<Vector3Int> Linear(int iterations)
         {
             List<Vector3Int> positions = new List<Vector3Int>();
-            for (int x = -instance.ceilsCount; x < instance.ceilsCount; x++)
+            for (int x = -iterations; x < iterations + 1; x++)
             {
                 Vector3Int pos = new Vector3Int(x, 0, 0);
                 if (pos != Vector3Int.zero)
                     positions.Add(pos);
             }
-            for (int y = -instance.ceilsCount; y < instance.ceilsCount; y++)
+            for (int y = -iterations; y < iterations + 1; y++)
             {
                 Vector3Int pos = new Vector3Int(0, y, 0);
                 if (pos != Vector3Int.zero)
                     positions.Add(pos);
             }
-            for (int z = -instance.ceilsCount; z < instance.ceilsCount; z++)
+            for (int z = -iterations; z < iterations + 1; z++)
             {
                 Vector3Int pos = new Vector3Int(0, 0, z);
                 if (pos != Vector3Int.zero)
@@ -285,6 +286,8 @@ public class TDChessManager : MonoBehaviour
                 positions.AddRange(FigureMovement.Pawn.ToList());
                 int side = _figure.color == FigureColor.white ? 1 : -1;
                 if (_figure.color == FigureColor.black) positions[0] *= side;
+
+                if (_figure.firstMove) positions.Add(positions[0] + Vector3Int.up * side);
 
                 Vector3Int pos = new Vector3Int(1, side, 1);
                 Vector3Int pos1 = new Vector3Int(-1, side, 1);
@@ -350,6 +353,7 @@ public class TDChessManager : MonoBehaviour
         }
         boards[newPos.y].ceil[newPos.x, newPos.z] = boards[originPos.y].ceil[originPos.x, originPos.z];
         boards[newPos.y].ceil[newPos.x, newPos.z].pos = newPos;
+        if (boards[newPos.y].ceil[newPos.x, newPos.z].firstMove) boards[newPos.y].ceil[newPos.x, newPos.z].firstMove = false;
         if (boards[newPos.y].ceil[newPos.x, newPos.z].type == FigureType.p)
         {
             if (boards[newPos.y].ceil[newPos.x, newPos.z].color == FigureColor.white && newPos.y == 7)
@@ -360,7 +364,7 @@ public class TDChessManager : MonoBehaviour
             if (boards[newPos.y].ceil[newPos.x, newPos.z].color == FigureColor.black && newPos.y == 0)
             {
                 DeleteFigure(newPos);
-                SetFigureCeil(CreateFigure(FigureType.q, FigureColor.white, newPos));
+                SetFigureCeil(CreateFigure(FigureType.q, FigureColor.black, newPos));
             }
         }
         boards[originPos.y].ceil[originPos.x, originPos.z] = null;
@@ -472,5 +476,10 @@ public class TDChessManager : MonoBehaviour
         //King
         SetFigureCeil(CreateFigure(FigureType.kg, FigureColor.white, new Vector3Byte(0, 0, 4)));
         SetFigureCeil(CreateFigure(FigureType.kg, FigureColor.black, new Vector3Byte(7, 7, 3)));
+    }
+
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene("Game");
     }
 }
