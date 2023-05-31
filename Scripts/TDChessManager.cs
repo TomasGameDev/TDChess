@@ -369,6 +369,7 @@ public class TDChessManager : MonoBehaviour
     }
     public static Figure GetFigureCeil(Vector3Byte _pos)
     {
+        if (!IsPosInBoard(_pos)) return null;
         return instance.boards[_pos.y].ceil[_pos.x, _pos.z];
     }
     static bool IsPosInBoard(Vector3Byte _pos)
