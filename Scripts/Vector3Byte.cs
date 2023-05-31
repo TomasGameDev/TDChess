@@ -22,4 +22,8 @@ public struct Vector3Byte
     {
         return new Vector3Byte((byte)(a.x + b.x), (byte)(a.y + b.y), (byte)(a.z + b.z));
     }
+    public static Vector3Byte operator -(Vector3Byte a, Vector3Byte b)
+    {
+        return new Vector3Byte((byte)(a.x - b.x), (byte)(a.y - b.y), (byte)(a.z - b.z));
+    }
 }

@@ -283,17 +283,18 @@ public class TDChessManager : MonoBehaviour
         {
             case FigureType.p:
                 positions.AddRange(FigureMovement.Pawn.ToList());
-                if (_figure.color == FigureColor.black) positions[0] = -positions[0];
+                int side = _figure.color == FigureColor.white ? 1 : -1;
+                if (_figure.color == FigureColor.black) positions[0] *= side;
 
-                Vector3Int pos = new Vector3Int(1, 1, 1);
-                Vector3Int pos1 = new Vector3Int(-1, 1, 1);
-                Vector3Int pos2 = new Vector3Int(1, 1, -1);
-                Vector3Int pos3 = new Vector3Int(-1, 1, -1);
+                Vector3Int pos = new Vector3Int(1, side, 1);
+                Vector3Int pos1 = new Vector3Int(-1, side, 1);
+                Vector3Int pos2 = new Vector3Int(1, side, -1);
+                Vector3Int pos3 = new Vector3Int(-1, side, -1);
 
-                Vector3Int pos4 = new Vector3Int(0, 1, 1);
-                Vector3Int pos5 = new Vector3Int(0, 1, 1);
-                Vector3Int pos6 = new Vector3Int(1, 1, 0);
-                Vector3Int pos7 = new Vector3Int(-1, 1, 0);
+                Vector3Int pos4 = new Vector3Int(0, side, 1);
+                Vector3Int pos5 = new Vector3Int(0, side, -1);
+                Vector3Int pos6 = new Vector3Int(1, side, 0);
+                Vector3Int pos7 = new Vector3Int(-1, side, 0);
 
                 Figure figure = GetFigureCeil(_figure.pos + new Vector3Byte((byte)pos.x, (byte)pos.y, (byte)pos.z));
                 Figure figure1 = GetFigureCeil(_figure.pos + new Vector3Byte((byte)pos1.x, (byte)pos1.y, (byte)pos1.z));

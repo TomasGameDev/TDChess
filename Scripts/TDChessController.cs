@@ -17,6 +17,7 @@ public class TDChessController : MonoBehaviour
     public Vector3Byte ceilPos;
     public TDChessManager.Figure selectedFigure;
     public Transform selectingBox;
+    bool moveChoosed = false;
     public void ThrowRay(Vector2 mousePos)
     {
         RaycastHit hit;
@@ -28,6 +29,7 @@ public class TDChessController : MonoBehaviour
             {
                 if ((layerCeil.value & (1 << hit.collider.gameObject.layer)) > 0)
                 {
+                    moveChoosed = true;
                     ceilPos = TDChessManager.instance.SelectCeil(hit.collider.transform.position, hit.collider.gameObject);
                 }
             }
@@ -54,6 +56,7 @@ public class TDChessController : MonoBehaviour
     }
     public void OnFigureMoveSelected()
     {
+        if (!moveChoosed) return;
         TDChessManager.instance.MoveFigure(selectedFigure.pos, ceilPos);
         EndMove();
     }
@@ -66,5 +69,6 @@ public class TDChessController : MonoBehaviour
         selectingBox.transform.localScale = Vector3.zero;
         ceilPos = Vector3Byte.zero;
         selectedFigure = null;
+        moveChoosed = false;
     }
 }
