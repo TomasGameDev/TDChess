@@ -517,18 +517,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   cameraPos: {fileID: 1944268850}
-  ceilPos:
-    x: 0
-    y: 0
-    z: 0
+  ceilPos: {x: 0, y: 0, z: 0}
   selectedFigure:
     type: 0
     color: 0
     obj: {fileID: 0}
-    _pos:
-      x: 0
-      y: 0
-      z: 0
+    _pos: {x: 0, y: 0, z: 0}
+    firstMove: 0
   selectingBox: {fileID: 1622738260}
   selectFigureButton: {fileID: 1438735398}
   selectMoveFigureButton: {fileID: 1097697021}
@@ -3641,6 +3636,8 @@ MonoBehaviour:
   ceilColors:
   - {r: 1, g: 1, b: 1, a: 0.03137255}
   - {r: 1, g: 1, b: 1, a: 0.14901961}
+  - {r: 1, g: 0, b: 0, a: 0.03137255}
+  - {r: 1, g: 0, b: 0, a: 0.14901961}
   chessGameType: 2
 --- !u!4 &1264935934
 Transform:

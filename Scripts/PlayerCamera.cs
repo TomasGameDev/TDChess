@@ -64,7 +64,7 @@ namespace RoysPlayer
                 {
                     focusTime++;
                     if (Vector2.Distance(lastFocusPos, focusPos) > screenFocusDistance)
-                        LockBlockController();
+                        LockCameraView();
                 }
             }
             RaycastHit hit;
@@ -97,7 +97,7 @@ namespace RoysPlayer
 #endif
             }
         }
-        public void LockBlockController()
+        public void LockCameraView()
         {
             lastFocusPos = focusPos;
             isFocusing = false;

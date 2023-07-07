@@ -14,7 +14,7 @@ public class TDChessController : MonoBehaviour
     public LayerMask layerChess;
     public LayerMask layerCeil;
     public Camera cameraPos;
-    public Vector3Byte ceilPos;
+    public Vector3Int ceilPos;
     public TDChessManager.Figure selectedFigure;
     public Transform selectingBox;
     bool moveChoosed = false;
@@ -37,7 +37,7 @@ public class TDChessController : MonoBehaviour
             {
                 if ((layerChess.value & (1 << hit.collider.gameObject.layer)) > 0)
                 {
-                    Vector3Byte figurePos = TDChessManager.GetCeilPos(hit.collider.transform.position);
+                    Vector3Int figurePos = TDChessManager.GetCeilPos(hit.collider.transform.position);
                     selectedFigure = TDChessManager.GetFigureCeil(figurePos);
                     selectingBox.transform.position = hit.collider.transform.position;
                     selectingBox.transform.localScale = hit.collider.GetComponent<BoxCollider>().size;
@@ -67,7 +67,7 @@ public class TDChessController : MonoBehaviour
         selectFigureButton.SetActive(true);
         selectMoveFigureButton.SetActive(false);
         selectingBox.transform.localScale = Vector3.zero;
-        ceilPos = Vector3Byte.zero;
+        ceilPos = Vector3Int.zero;
         selectedFigure = null;
         moveChoosed = false;
     }
