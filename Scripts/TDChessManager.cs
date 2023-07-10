@@ -19,7 +19,26 @@ public class TDChessManager : MonoBehaviour
     public float ceilSize = 1;
     public List<Figure> figuresWhite;
     public List<Figure> figuresBlack;
+    public int moveNumber = 0;
+    public List<Move> moves;
+    [System.Serializable]
+    public class Move
+    {
+        public FigureStruct a;
+        public FigureStruct b;
 
+        public Move(Vector3Int _posA, Vector3Int _posB)
+        {
+            Figure _a = GetFigureCeil(_posA);
+            Figure _b = GetFigureCeil(_posB);
+            FigureStruct _aStruct = new FigureStruct(_a);
+            a = _aStruct;
+            if (_a == null) a.pos = _posA;
+            FigureStruct _bStruct = new FigureStruct(_b);
+            b = _bStruct;
+            if (_b == null) b.pos = _posB;
+        }
+    }
     [System.Serializable]
     public class Figure
     {
@@ -44,6 +63,34 @@ public class TDChessManager : MonoBehaviour
             color = _color;
             obj = _obj;
             pos = _pos;
+        }
+    }
+    [System.Serializable]
+    public struct FigureStruct
+    {
+        public FigureType type;
+        public FigureColor color;
+        public Vector3Int pos;
+        public bool firstMove;
+        public bool isNull;
+        public FigureStruct(Figure figure)
+        {
+            if (figure != null)
+            {
+                type = figure.type;
+                color = figure.color;
+                pos = figure.pos;
+                firstMove = figure.firstMove;
+                isNull = false;
+            }
+            else
+            {
+                type = FigureType.p;
+                color = FigureColor.white;
+                pos = Vector3Int.zero;
+                firstMove = false;
+                isNull = true;
+            }
         }
     }
     /// <summary>
@@ -533,29 +580,77 @@ public class TDChessManager : MonoBehaviour
     }
     public void MoveFigure(Vector3Int originPos, Vector3Int newPos)
     {
+        if (moves.Count == 0)
+        {
+            moveNumber++;
+            moves.Add(new Move(newPos, originPos));
+        }
+        if (moveNumber != moves.Count) return;
         if (!IsPosInBoard(newPos)) return;
-        if (boards[newPos.y].ceil[newPos.x, newPos.z] != null)
+        if (GetFigureCeil(newPos) != null)
         {
             DeleteFigure(newPos);
         }
-        boards[newPos.y].ceil[newPos.x, newPos.z] = boards[originPos.y].ceil[originPos.x, originPos.z];
+        boards[newPos.y].ceil[newPos.x, newPos.z] = GetFigureCeil(originPos);
         boards[newPos.y].ceil[newPos.x, newPos.z].pos = newPos;
-        if (boards[newPos.y].ceil[newPos.x, newPos.z].firstMove) boards[newPos.y].ceil[newPos.x, newPos.z].firstMove = false;
-        if (boards[newPos.y].ceil[newPos.x, newPos.z].type == FigureType.p)
+        if (GetFigureCeil(newPos).firstMove) boards[newPos.y].ceil[newPos.x, newPos.z].firstMove = false;
+        if (GetFigureCeil(newPos).type == FigureType.p)
         {
-            if (boards[newPos.y].ceil[newPos.x, newPos.z].color == FigureColor.white && newPos.y == 7)
+            if (GetFigureCeil(newPos).color == FigureColor.white && newPos.y == 7)
             {
                 DeleteFigure(newPos);
                 SetFigureCeil(CreateFigure(FigureType.q, FigureColor.white, newPos));
             }
-            if (boards[newPos.y].ceil[newPos.x, newPos.z].color == FigureColor.black && newPos.y == 0)
+            if (GetFigureCeil(newPos).color == FigureColor.black && newPos.y == 0)
             {
                 DeleteFigure(newPos);
                 SetFigureCeil(CreateFigure(FigureType.q, FigureColor.black, newPos));
             }
         }
         boards[originPos.y].ceil[originPos.x, originPos.z] = null;
+        moveNumber++;
+        moves.Add(new Move(newPos, originPos));
+    }
+    public void Undo()
+    {
+        if (moveNumber > 0)
+        {
+            moveNumber--;
+            MoveHistory();
+        }
+    }
+    public void Redo()
+    {
+        if (moveNumber < moves.Count - 1)
+        {
+            moveNumber++;
+            MoveHistory();
+        }
+    }
+    public void MoveHistory()
+    {
+        FigureStruct a = moves[moveNumber].a;
+        FigureStruct b = moves[moveNumber].b;
 
+        if (GetFigureCeil(b.pos) != null)
+        {
+            DeleteFigure(a.pos);
+        }
+        if (!a.isNull)
+        {
+            SetFigureCeil(CreateFigure(a.type, a.color, a.pos));
+        }
+        else DeleteFigure(a.pos);
+
+        if (GetFigureCeil(b.pos) != null)
+        {
+            DeleteFigure(b.pos);
+        }
+        if (!b.isNull)
+        {
+            SetFigureCeil(CreateFigure(b.type, b.color, b.pos));
+        }
+        else DeleteFigure(b.pos);
     }
     public static Vector3 GetCeilWorldPos(Vector3Int pos)
     {
@@ -574,9 +669,9 @@ public class TDChessManager : MonoBehaviour
     }
     public void DeleteFigure(Vector3Int pos)
     {
-        if (boards[pos.y].ceil[pos.x, pos.z] != null)
+        if (GetFigureCeil(pos) != null)
         {
-            Destroy(boards[pos.y].ceil[pos.x, pos.z].obj);
+            Destroy(GetFigureCeil(pos).obj);
             boards[pos.y].ceil[pos.x, pos.z] = null;
         }
     }
@@ -670,3 +765,18 @@ public class TDChessManager : MonoBehaviour
         SceneManager.LoadScene("Game");
     }
 }
+
+#if UNITY_EDITOR
+[UnityEditor.CustomEditor(typeof(TDChessManager))]
+public class TDChessManagerEditor : UnityEditor.Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+        var manager = target as TDChessManager;
+        if (GUILayout.Button("Undo")) manager.Undo();
+        if (GUILayout.Button("Redo")) manager.Redo();
+        if (GUILayout.Button("MoveHistory")) manager.MoveHistory();
+    }
+}
+#endif
