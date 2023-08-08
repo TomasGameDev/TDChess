@@ -593,7 +593,6 @@ public class TDChessManager : MonoBehaviour
         }
         boards[newPos.y].ceil[newPos.x, newPos.z] = GetFigureCeil(originPos);
         boards[newPos.y].ceil[newPos.x, newPos.z].pos = newPos;
-        if (GetFigureCeil(newPos).firstMove) boards[newPos.y].ceil[newPos.x, newPos.z].firstMove = false;
         if (GetFigureCeil(newPos).type == FigureType.p)
         {
             if (GetFigureCeil(newPos).color == FigureColor.white && newPos.y == 7)
@@ -607,6 +606,7 @@ public class TDChessManager : MonoBehaviour
                 SetFigureCeil(CreateFigure(FigureType.q, FigureColor.black, newPos));
             }
         }
+        if (GetFigureCeil(newPos).firstMove) boards[newPos.y].ceil[newPos.x, newPos.z].firstMove = false;
         boards[originPos.y].ceil[originPos.x, originPos.z] = null;
         moveNumber++;
         moves.Add(new Move(newPos, originPos));
@@ -727,8 +727,12 @@ public class TDChessManager : MonoBehaviour
         //Pawn
         for (int z = 0; z < 8; z++)
         {
-            SetFigureCeil(CreateFigure(FigureType.p, FigureColor.white, new Vector3Int(1, 1, (byte)z)));
-            SetFigureCeil(CreateFigure(FigureType.p, FigureColor.black, new Vector3Int(6, 6, (byte)z)));
+            SetFigureCeil(CreateFigure(FigureType.p, FigureColor.white, new Vector3Int(1, 1, z)));
+            SetFigureCeil(CreateFigure(FigureType.p, FigureColor.white, new Vector3Int(0, 1, z)));
+            SetFigureCeil(CreateFigure(FigureType.p, FigureColor.white, new Vector3Int(1, 0, z)));
+            SetFigureCeil(CreateFigure(FigureType.p, FigureColor.black, new Vector3Int(6, 6, z)));
+            SetFigureCeil(CreateFigure(FigureType.p, FigureColor.black, new Vector3Int(7, 6, z)));
+            SetFigureCeil(CreateFigure(FigureType.p, FigureColor.black, new Vector3Int(6, 7, z)));
         }
         //Knight
         SetFigureCeil(CreateFigure(FigureType.kn, FigureColor.white, new Vector3Int(0, 0, 1)));
